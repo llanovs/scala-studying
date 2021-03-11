@@ -1,4 +1,5 @@
 package demo
+import java.util.Date;
 
 object Function2 {
 
@@ -21,6 +22,24 @@ object Function2 {
     //some unknown param add another unknown param
     var result4 = math(12, 20.5, 34.5, _ + _);
     println(result4);
+
+
+    //Partially applied functions
+
+    //fully applied function
+    val sum = (a: Int, b: Int, c: Int) => a + b + c;
+    println("fully applied function: " + sum(10,20,30));
+
+    //partially applied function
+
+    var f = sum(10, 20, _: Int);
+    println("partially applied function: " + f(30));
+
+    val date = new Date;
+    val newLog = log(date, _: String);
+
+    newLog("Hey from Log");
+
   }
 
   def math(x: Double, y: Double,
@@ -29,5 +48,7 @@ object Function2 {
   def math(x: Double, y: Double, z: Double,
            f: (Double, Double) => Double): Double = f(f(x, y), z);
 
+  def log (date: Date, message: String) =
+    println(date + " " + message);
 
 }
