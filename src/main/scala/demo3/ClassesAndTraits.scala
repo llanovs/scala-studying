@@ -3,13 +3,29 @@ package demo3
 object ClassesAndTraits extends App {
 
   sealed trait Shape extends Located with Bounded with Movable
+  
+  sealed trait Shape2D extends Shape with Calculate2D
 
+  sealed trait Shape3D extends Shape with Calculate3D
+  
   sealed trait Located {
     def x: Double
 
     def y: Double
   }
 
+  sealed trait Calculate2D {
+    
+    def area: Double
+  }
+
+  sealed trait Calculate3D {
+
+    def surfaceArea: Double
+
+    def volume: Double
+  }
+  
   sealed trait Bounded {
     def minX: Double
 
@@ -20,7 +36,7 @@ object ClassesAndTraits extends App {
     def maxY: Double
   }
 
-  final case class Point(x: Double, y: Double) extends Shape {
+  final case class Point(x: Double, y: Double) extends Shape2D {
     override def minX: Double = x
 
     override def maxX: Double = x
@@ -32,9 +48,11 @@ object ClassesAndTraits extends App {
     override def move(dx: Double, dy: Double): Point = {
       new Point(x + dx, y + dy);
     }
+
+    override def area: Double = 0
   }
 
-  final case class Circle(centerX: Double, centerY: Double, radius: Double) extends Shape {
+  final case class Circle(centerX: Double, centerY: Double, radius: Double) extends Shape2D {
     override def x: Double = centerX
 
     override def y: Double = centerY
@@ -50,6 +68,9 @@ object ClassesAndTraits extends App {
     override def move(dx: Double, dy: Double): Circle = {
       new Circle(x + dx, y + dy, radius);
     }
+
+    override def area: Double = Math.PI * Math.pow(radius, 2)
+    
   }
 
   // Exercise. Implement an algorithm for finding the minimum bounding rectangle
@@ -70,7 +91,7 @@ object ClassesAndTraits extends App {
   // Exercise. Add another Shape class called Rectangle and check that the compiler catches that we are
   // missing code to handle it in `describe`.
 
-  final case class Rectangle(centerX: Double, centerY: Double, width: Double, height: Double) extends Shape {
+  final case class Rectangle(centerX: Double, centerY: Double, width: Double, height: Double) extends Shape2D {
     override def x: Double = centerX
 
     override def y: Double = centerY
@@ -86,12 +107,14 @@ object ClassesAndTraits extends App {
     override def move(dx: Double, dy: Double): Rectangle = {
       new Rectangle(x + dx, y + dy, width, height);
     }
+
+    override def area: Double = width * height
   }
 
   val rectangle = Rectangle(50, 50, 100, 50)
 
 
-  // TODO: Exercise. Add another Shape class called Rectangle and check that the compiler catches that we are
+  // Exercise. Add another Shape class called Rectangle and check that the compiler catches that we are
   // missing code to handle it in `describe`.
 
   // Let us come back to our `Shape`-s and add a `Movable` trait
@@ -138,7 +161,70 @@ object ClassesAndTraits extends App {
   // to skip it (leave unimplemented), the primary intent of this
   // exercise is modelling using case classes and traits, and not math.
 
+  final case class Square(centerX: Double, centerY: Double, width: Double) extends Shape2D {
+    override def x: Double = centerX
 
+    override def y: Double = centerY
+
+    override def minX: Double = centerX - width/2
+
+    override def maxX: Double = centerX + width/2
+
+    override def minY: Double = centerY - width/2
+
+    override def maxY: Double = centerY + width/2
+
+    override def move(dx: Double, dy: Double): Square = {
+      new Square(x + dx, y + dy, width);
+    }
+
+    override def area: Double = Math.pow(width, 2)
+  }
+
+  final case class Sphere(centerX: Double, centerY: Double, radius: Double) extends Shape3D {
+    override def x: Double = centerX
+
+    override def y: Double = centerY
+
+    override def minX: Double = centerX - radius
+
+    override def maxX: Double = centerX + radius
+
+    override def minY: Double = centerY - radius
+
+    override def maxY: Double = centerY + radius
+
+    override def move(dx: Double, dy: Double): Sphere = {
+      new Sphere(x + dx, y + dy, radius);
+    }
+
+    override def surfaceArea: Double =  4 * Math.PI * Math.pow(radius, 2)
+    
+    override def volume: Double = 4/3 * Math.PI * Math.pow(radius, 3)
+  }
+
+  final case class Cube(centerX: Double, centerY: Double, radius: Double) extends Shape3D {
+    override def x: Double = centerX
+
+    override def y: Double = centerY
+
+    override def minX: Double = centerX - 2 * radius
+
+    override def maxX: Double = centerX + 2 * radius
+
+    override def minY: Double = centerY - 2 * radius
+
+    override def maxY: Double = centerY + 2 * radius
+
+    override def move(dx: Double, dy: Double): Cube = {
+      new Cube(x + dx, y + dy, radius);
+    }
+    
+    override def surfaceArea: Double = 24 * Math.pow(radius, 2)
+
+    override def volume: Double = 8 * Math.pow(radius, 3)
+  }
+  
 
   // Exercise. Implement a "Fizz-Buzz" https://en.wikipedia.org/wiki/Fizz_buzz function using the if-then-else,
   // returning "fizzbuzz" for numbers which divide with 15, "fizz" for those which divide by 3 and "buzz" for
