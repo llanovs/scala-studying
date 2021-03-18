@@ -150,4 +150,8 @@ object ControlStructuresHomework {
 
   // This `main` method reads lines from stdin, passes each to `process` and outputs the return value to stdout
   def main(args: Array[String]): Unit = Source.stdin.getLines() map process foreach println
+  
+  //todo: 
+  //1) fixed parseCommand in part of wrong values
+  //2) fixed renderResult in part of render int values
 }
