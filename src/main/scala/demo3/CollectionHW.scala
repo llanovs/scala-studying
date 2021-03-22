@@ -1,5 +1,8 @@
 package demo3
 
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
+
 object CollectionHW extends App {
 
   object Solution {
@@ -111,16 +114,16 @@ object CollectionHW extends App {
     //Runtime: 1136 ms, faster than 57.14% of Scala online submissions for Widest Vertical Area Between Two Points Containing No Points.
     //Memory Usage: 120.7 MB, less than 65.31% of Scala online submissions for Widest Vertical Area Between Two Points Containing No Points.
     def maxWidthOfVerticalArea(points: Array[Array[Int]]): Int = {
-        points.map(arr => arr(0))
+      points.map(arr => arr(0))
         .sortWith(_ < _)
-        .foldLeft((0, Option.empty[Int])) {(tup, value) =>
+        .foldLeft((0, Option.empty[Int])) { (tup, value) =>
           (math.max(tup._1, tup._2.map(x => value - x).getOrElse(0)),
             Option(value)
           )
         }._1
     }
-    
-    
+
+
     // https://leetcode.com/problems/maximum-nesting-depth-of-the-parentheses/
     //Runtime: 452 ms, faster than 40.43% of Scala online submissions for Maximum Nesting Depth of the Parentheses.
     //Memory Usage: 50.8 MB, less than 29.79% of Scala online submissions for Maximum Nesting Depth of the Parentheses.
@@ -141,9 +144,9 @@ object CollectionHW extends App {
       var previousSymb: Char = s.charAt(0)
 
       for (symb <- s.toCharArray) {
-        if(countElem == 0 && previousSymb != symb) previousSymb = symb
+        if (countElem == 0 && previousSymb != symb) previousSymb = symb
         if (symb == previousSymb) countElem = countElem + 1
-        else { 
+        else {
           countElem = countElem - 1
           if (countElem == 0) {
             count = count + 1
@@ -153,4 +156,39 @@ object CollectionHW extends App {
       count
     }
   }
+
+  // Implement scanLeft (not using scans ofc)
+  def scanLeft[T](zero: T)(list: List[T])(f: (T, T) => T): List[T] = {
+    var acc = zero;
+    list.map(item => {
+      acc = f(acc, item)
+      acc
+    })
+  }
+
+  var r = scanLeft[Int](0)(List(1, 2, 3, 4, 5))(_ + _)
+  r.foreach(println)
+
+  // https://twitter.com/allenholub/status/1357115515672555520/photo/1
+  // pass the interview
+  def count(s: String): Array[(Char, Int)] = {
+    var count = 0;
+    var previousSymb = s.charAt(0)
+    var result = ArrayBuffer[(Char, Int)]()
+    for (symb <- s.toCharArray) {
+      if (symb == previousSymb) count = count + 1
+      else {
+        result += (Tuple2(previousSymb, count))
+        previousSymb = symb
+        count = 1
+      }
+    }
+    result += (Tuple2(previousSymb, count))
+    result.toArray
+  }
+
+  val s = "aaaabbbcca"
+  val res = count(s)
+  res.foreach(x => print(s"$x "))
 }
+
