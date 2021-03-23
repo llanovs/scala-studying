@@ -38,10 +38,8 @@ object AlgebraicDataTypes extends App {
   // SMART CONSTRUCTORS
 
   // Smart constructor is a pattern, which allows creating only valid instances of a class.
-
   // Exercise. Create a smart constructor for `GameLevel` that only permits levels from 1 to 80.
-  final case class GameLevel private(value: Int) extends AnyVal
-
+  final case class GameLevel private (value: Int) extends AnyVal
   object GameLevel {
     def create(value: Int): Option[GameLevel] = {
       if (value < 1 || value > 80) None
@@ -132,6 +130,4 @@ object AlgebraicDataTypes extends App {
   // and a license plate number (can contain from 3 to 8 upper case letters and numbers). Use value classes
   // and smart constructors as appropriate.
   type Car = Nothing
-
-
 }
