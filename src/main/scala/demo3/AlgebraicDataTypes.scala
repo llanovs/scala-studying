@@ -38,7 +38,17 @@ object AlgebraicDataTypes extends App {
   // SMART CONSTRUCTORS
 
   // Smart constructor is a pattern, which allows creating only valid instances of a class.
-
+  
+  // Exercise. Create a smart constructor for `GameLevel` that only permits levels from 1 to 80.
+  final case class GameLevel private (value: Int) extends AnyVal
+  object GameLevel {
+    def create(value: Int): Option[GameLevel] = {
+      if (value < 1 || value > 80) None
+      else Some(GameLevel(value))
+    }
+  }
+  
+  
   // SUM TYPES
 
   // A sum type is an enumerated type. To define it one needs to enumerate all its possible variants.
