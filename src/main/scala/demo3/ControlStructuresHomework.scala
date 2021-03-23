@@ -113,14 +113,20 @@ object ControlStructuresHomework {
     import demo3.ControlStructuresHomework.Command._
 
     val data: List[String] = x.split(" ").toList;
-    val numbers: List[Double] = data.drop(1).map(elem => elem.trim.toDouble);
 
+    val eithers: Seq[Either[String, Double]] = data.drop(1)
+      .map(x => x.toDoubleOption.toRight(s"Error: Failed to parse $x"))
+    
+    val numbers = eithers collect {
+      case Right(x) => x;
+    }
+    
     data(0) match {
-      case "divide" => Right(Divide(numbers(0), numbers(1)))
-      case "sum" => Right(Sum(numbers))
-      case "average" => Right(Average(numbers))
-      case "min" => Right(Min(numbers))
-      case "max" => Right(Max(numbers))
+      case "divide" => Right(Divide(numbers.head, numbers.tail.head))
+      case "sum" => Right(Sum(numbers.toList))
+      case "average" => Right(Average(numbers.toList))
+      case "min" => Right(Min(numbers.toList))
+      case "max" => Right(Max(numbers.toList))
       case _ => Left(ErrorMessage("Error: Operation not found"))
     }
   }
@@ -138,13 +144,13 @@ object ControlStructuresHomework {
     val parsed = parseCommand(x);
 
     parsed match {
+      case Left(errorMessage) => errorMessage.toString
       case Right(value) => {
         calculate(value) match {
           case Right(result) => value.renderResult(result)
           case Left(errorMessage) => errorMessage.toString
         }
       }
-      case Left(errorMessage) => errorMessage.toString
     }
   }
 
